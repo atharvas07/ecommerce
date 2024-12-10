@@ -20,8 +20,8 @@ public class RedisService {
         redisTemplate.opsForValue().set(key, value, Duration.ofSeconds(timeoutInSeconds));
     }
 
-    public String getValue(String key) {
-        return (String) redisTemplate.opsForValue().get(key);
+    public Object getValue(String key) {
+        return redisTemplate.opsForValue().get(key);
     }
 
     public void deleteValue(String key) {
