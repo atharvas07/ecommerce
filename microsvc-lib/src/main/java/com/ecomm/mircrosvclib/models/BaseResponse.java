@@ -1,6 +1,8 @@
 package com.ecomm.mircrosvclib.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 public class BaseResponse {
 
@@ -60,10 +62,23 @@ public class BaseResponse {
 
     public static BaseResponse getErrorResponse(String errorMessage) {
         BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setRespMsg("ERROR");
         baseResponse.setStatus("error");
+        baseResponse.setMessage(errorMessage);
         baseResponse.setStatusCode(500);
         return baseResponse;
+    }
+
+    public static BaseResponse getClientErrorResponse(String errorMessage) {
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setMessage(errorMessage);
+        baseResponse.setStatusCode(400);
+        baseResponse.setStatus("error");
+        return baseResponse;
+    }
+
+    public ResponseEntity<BaseResponse> toResponseEntity() {
+        HttpStatus httpStatus = HttpStatus.valueOf(this.statusCode);
+        return new ResponseEntity<>(this, httpStatus);
     }
 }
 
