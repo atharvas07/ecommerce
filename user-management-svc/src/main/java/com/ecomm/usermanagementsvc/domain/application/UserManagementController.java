@@ -2,14 +2,10 @@ package com.ecomm.usermanagementsvc.domain.application;
 
 import com.ecomm.mircrosvclib.models.BaseResponse;
 import com.ecomm.usermanagementsvc.domain.services.redis.RedisService;
-import com.fasterxml.jackson.databind.ser.Serializers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -30,7 +26,9 @@ public class UserManagementController {
         return BaseResponse.getSuccessResponse("User logged in successfully");
     }
 
-    public BaseResponse logout(){
+    @GetMapping("/logout/{sessionId}")
+    public BaseResponse logout(@PathVariable String sessionId) {
+        redisService.deleteValue(sessionId);
         return BaseResponse.getSuccessResponse("User logged out successfully");
     }
 
