@@ -5,7 +5,9 @@ import com.ecomm.mircrosvclib.models.BaseResponse;
 import com.ecomm.mircrosvclib.utils.CommonUtils;
 import com.ecomm.mircrosvclib.utils.JsonUtils;
 import com.ecomm.usermanagementsvc.domain.dtos.request.LoginClientRequest;
+import com.ecomm.usermanagementsvc.domain.dtos.request.ModifyDetailsClientRequest;
 import com.ecomm.usermanagementsvc.domain.dtos.request.RegisterUserClientRequest;
+import com.ecomm.usermanagementsvc.domain.dtos.request.ResetPasswordClientRequest;
 import com.ecomm.usermanagementsvc.domain.dtos.response.RegisterUserClientResponse;
 import com.ecomm.usermanagementsvc.domain.services.redis.RedisService;
 import com.ecomm.usermanagementsvc.domain.services.user.UserService;
@@ -29,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private static final String ERROR_USER_NOT_EXIST = "User does not exist";
     private static final String ERROR_INVALID_PASSWORD = "Invalid password";
     private static final String ERROR_INVALID_SESSION = "Invalid session";
+    private static final Object SUCCESS_PASSWORD_RESET = "Password reset successfully";
 
     private final UserDetailsRepository userDetailsRepository;
 
@@ -79,6 +82,45 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public ResponseEntity<BaseResponse> logout(String sessionId) {
+        try {
+            redisService.deleteValue(sessionId);
+            return BaseResponse.getSuccessResponse("Logged out successfully").toResponseEntity();
+        } catch (Exception ex) {
+            return BaseResponse.getErrorResponse(ex.getMessage()).toResponseEntity();
+        }
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse> modifyDetails(ModifyDetailsClientRequest request, String sessionId) {
+        try {
+
+            return BaseResponse.getSuccessResponse(SUCCESS_PASSWORD_RESET).toResponseEntity();
+        } catch (Exception ex) {
+            return BaseResponse.getErrorResponse(ex.getMessage()).toResponseEntity();
+        }
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse> resetPassword(ResetPasswordClientRequest request, String sessionId) {
+        try {
+            EcommUserDetails userDetails = userDetailsRepository.getByEmail(request.getEmail());
+            if (userDetails == null) {
+                throw new CustomException(ERROR_USER_NOT_EXIST);
+            }
+            if (!userDetails.getPassword().equals(CommonUtils.encodeMD5(request.getPassword()))) {
+                throw new CustomException(ERROR_INVALID_PASSWORD);
+            }
+            userDetailsRepository.updatePasswordById(CommonUtils.encodeMD5(request.getNewPassword()), userDetails.getId());
+            redisService.deleteValue(sessionId);
+            return BaseResponse.getSuccessResponse(SUCCESS_PASSWORD_RESET).toResponseEntity();
+        } catch (CustomException ce) {
+            return BaseResponse.getClientErrorResponse(ce.getMessage()).toResponseEntity();
+        } catch (Exception ex) {
+            return BaseResponse.getErrorResponse(ex.getMessage()).toResponseEntity();
+        }
+    }
     private EcommUserDetails validateUserCredentials(LoginClientRequest request) throws CustomException {
         EcommUserDetails userDetails = userDetailsRepository.getByEmail(request.getEmail());
         if (userDetails == null) {
