@@ -285,7 +285,9 @@ public class UserServiceImpl implements UserService {
             List<EcommUserAddressDetails> existingAddresses = userAddressDetailsRepository.findAllByUserId(userId);
 
             switch (action.toLowerCase()) {
-                case "update" -> handleUpdate(existingAddresses, address, userId);
+                case "update" -> {
+                    handleUpdate(existingAddresses, address, userId);
+                }
                 case "delete" -> handleDelete(existingAddresses, address);
                 default -> throw new CustomException("Invalid action specified. Use 'update' or 'delete'.");
             }
@@ -306,10 +308,13 @@ public class UserServiceImpl implements UserService {
     }
 
     private void handleUpdate(List<EcommUserAddressDetails> existingAddresses, Address address, String userId) throws CustomException {
+        if (Boolean.TRUE.equals(address.getPrimary())) {
+            existingAddresses.forEach(addr -> addr.setPrimary(false));
+        }
         if (address.getId() == null) {
             EcommUserAddressDetails newAddress = getEcommUserAddressDetails(address, userId);
             newAddress.setId(UUID.randomUUID().toString());
-            newAddress.setPrimary(address.getPrimary());
+            newAddress.setPrimary(existingAddresses.isEmpty() || address.getPrimary() == null || address.getPrimary());
             existingAddresses.add(newAddress);
         } else {
             boolean updated = false;
@@ -323,9 +328,7 @@ public class UserServiceImpl implements UserService {
             if (!updated) {
                 throw new CustomException("Specified address to update does not exist.");
             }
-            if (Boolean.TRUE.equals(address.getPrimary())) {
-                existingAddresses.forEach(addr -> addr.setPrimary(false));
-            }
+
         }
     }
 
@@ -371,7 +374,7 @@ public class UserServiceImpl implements UserService {
         existingAddress.setCountry(updatedAddress.getCountry());
         existingAddress.setPinCode(updatedAddress.getPinCode());
         existingAddress.setMobile(updatedAddress.getMobile());
-        existingAddress.setPrimary(Boolean.TRUE.equals(updatedAddress.getPrimary()));
+        existingAddress.setPrimary(updatedAddress.getPrimary());
     }
 
     private Address convertToResponseAddress(EcommUserAddressDetails ecommUserAddressDetails) {
