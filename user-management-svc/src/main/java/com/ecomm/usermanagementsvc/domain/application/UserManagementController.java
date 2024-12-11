@@ -1,9 +1,11 @@
 package com.ecomm.usermanagementsvc.domain.application;
 
 import com.ecomm.mircrosvclib.models.BaseResponse;
+import com.ecomm.usermanagementsvc.domain.dtos.request.LoginClientRequest;
 import com.ecomm.usermanagementsvc.domain.dtos.request.RegisterUserClientRequest;
 import com.ecomm.usermanagementsvc.domain.services.redis.RedisService;
 import com.ecomm.usermanagementsvc.domain.services.user.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,13 +31,19 @@ public class UserManagementController {
 
     @GetMapping("/logout/{sessionId}")
     public BaseResponse logout(@PathVariable String sessionId) {
-        redisService.deleteValue(sessionId); // Clear session from Redis
+        redisService.deleteValue(sessionId);
         return BaseResponse.getSuccessResponse("User logged out successfully");
     }
 
     @GetMapping("/generateSession")
     public ResponseEntity<BaseResponse> generateSession() {
         return userService.createSession();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<BaseResponse> login(HttpServletRequest servletRequest, @Valid @RequestBody LoginClientRequest request) {
+        String sessionId = servletRequest.getHeader("session-id");
+        return userService.login(request, sessionId);
     }
 
 }

@@ -55,7 +55,8 @@ public class JsonUtils {
                 .replace("\\\\", "\\")
                 .replace("\\n", "\n")
                 .replace("\\r", "\r")
-                .replace("\\t", "\t");
+                .replace("\\t", "\t")
+                .replace("\\/", "/");
     }
 
     private static String getStringFromObj(final Object objToConvert) {

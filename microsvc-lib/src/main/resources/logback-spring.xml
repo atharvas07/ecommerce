@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- Use a PatternLayoutEncoder to define the custom JSON format -->
+        <encoder>
+            <pattern>
+                {"timestamp":"%date{yyyy-MM-dd
+                HH:mm:ss.SSS}","level":"%level","logger":"%logger","thread":"%thread","message":%msg}%n%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- Root logger -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
