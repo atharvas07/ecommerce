@@ -1,10 +1,7 @@
 package com.ecomm.usermanagementsvc.domain.services.user;
 
 import com.ecomm.mircrosvclib.models.BaseResponse;
-import com.ecomm.usermanagementsvc.domain.dtos.request.LoginClientRequest;
-import com.ecomm.usermanagementsvc.domain.dtos.request.ModifyDetailsClientRequest;
-import com.ecomm.usermanagementsvc.domain.dtos.request.RegisterUserClientRequest;
-import com.ecomm.usermanagementsvc.domain.dtos.request.ResetPasswordClientRequest;
+import com.ecomm.usermanagementsvc.domain.dtos.request.*;
 import org.springframework.http.ResponseEntity;
 
 public interface UserService {
@@ -19,4 +16,8 @@ public interface UserService {
     ResponseEntity<BaseResponse> modifyDetails(ModifyDetailsClientRequest request, String sessionId);
 
     ResponseEntity<BaseResponse> resetPassword(ResetPasswordClientRequest request, String sessionId);
+
+    ResponseEntity<BaseResponse> profileDetails(String userId);
+
+    ResponseEntity<BaseResponse> updateAddress(String userId, String action, Address address);
 }

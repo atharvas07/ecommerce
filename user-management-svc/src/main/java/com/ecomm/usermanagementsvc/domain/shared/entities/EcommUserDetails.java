@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -32,6 +33,9 @@ public class EcommUserDetails {
 
     @Column(name = "PASSWORD")
     private String password;
+
+    @Column(name = "CREATED_AT")
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     public String getUserName() {
         return userName;
@@ -88,5 +92,10 @@ public class EcommUserDetails {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
 }
 

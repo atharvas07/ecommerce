@@ -18,4 +18,5 @@ public interface UserDetailsRepository extends JpaRepository<EcommUserDetails, S
     @Query("update EcommUserDetails e set e.password = :password where e.id = :id")
     @Modifying
     void updatePasswordById(String password, String id);
+
 }

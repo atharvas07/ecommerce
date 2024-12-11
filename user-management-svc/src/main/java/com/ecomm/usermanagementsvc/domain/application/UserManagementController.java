@@ -1,12 +1,9 @@
 package com.ecomm.usermanagementsvc.domain.application;
 
 import com.ecomm.mircrosvclib.models.BaseResponse;
-import com.ecomm.usermanagementsvc.domain.dtos.request.LoginClientRequest;
-import com.ecomm.usermanagementsvc.domain.dtos.request.RegisterUserClientRequest;
-import com.ecomm.usermanagementsvc.domain.dtos.request.ResetPasswordClientRequest;
+import com.ecomm.usermanagementsvc.domain.dtos.request.*;
 import com.ecomm.usermanagementsvc.domain.services.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -45,10 +42,27 @@ public class UserManagementController {
         return userService.login(request, sessionId);
     }
 
+    @PostMapping("/update-profile")
+    public ResponseEntity<BaseResponse> updateProfile(HttpServletRequest servletRequest, @Valid @RequestBody ModifyDetailsClientRequest request) {
+        String sessionId = servletRequest.getHeader("session-id");
+        return userService.modifyDetails(request, sessionId);
+    }
+
     @PostMapping("/reset-password")
-    public ResponseEntity<BaseResponse> resetPassword(HttpServletRequest servletRequest, @Valid @RequestBody ResetPasswordClientRequest request, HttpSession httpSession) {
+    public ResponseEntity<BaseResponse> resetPassword(HttpServletRequest servletRequest, @Valid @RequestBody ResetPasswordClientRequest request) {
         String sessionId = servletRequest.getHeader("session-id");
         return userService.resetPassword(request, sessionId);
     }
+
+    @GetMapping("/profile-details/{userId}")
+    public ResponseEntity<BaseResponse> profileDetails(@PathVariable String userId) {
+        return userService.profileDetails(userId);
+    }
+
+    @PostMapping("/address/{userId}/{action}")
+    public ResponseEntity<BaseResponse> updateAddress(@PathVariable String userId, @PathVariable String action, @RequestBody Address address) {
+        return userService.updateAddress(userId, action, address);
+    }
+
 
 }
