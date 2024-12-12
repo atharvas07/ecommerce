@@ -4,6 +4,11 @@ public class Rating {
     private Double rate;
     private Integer count;
 
+    public Rating(Double rating, int ratingCount) {
+        this.rate = rating;
+        this.count = ratingCount;
+    }
+
     public Double getRate() {
         return rate;
     }

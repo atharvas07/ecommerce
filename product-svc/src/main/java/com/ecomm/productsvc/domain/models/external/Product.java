@@ -9,6 +9,7 @@ public class Product {
     private String category;
     private String image;
     private Rating rating;
+    private int quantity;
 
     public void setId(Long id) {
         this.id = id;
@@ -64,6 +65,14 @@ public class Product {
 
     public String getTitle() {
         return title;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }
 
