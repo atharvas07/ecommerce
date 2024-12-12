@@ -32,4 +32,8 @@ public class CommonUtils {
             throw new RuntimeException("MD5 algorithm not found", e);
         }
     }
+
+    public static String generateOrderId() {
+        return String.valueOf("OR"+System.currentTimeMillis());
+    }
 }

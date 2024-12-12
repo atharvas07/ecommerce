@@ -74,7 +74,7 @@ public class RazorPayServiceImpl implements RazorPayService {
                 transaction.setStatus(paymentEntity.getStatus());
                 transaction.setFees((double) (paymentEntity.getFee() / 100));
                 transaction.setMethod(paymentEntity.getMethod());
-                transaction.setTxnTime(paymentEntity.getUpdatedAt());
+                transaction.setTxnTime(paymentEntity.getCreatedAt());
                 transaction.setVpa(paymentEntity.getVpa());
                 transaction.setBank(paymentEntity.getBank());
                 transaction.setCard(paymentEntity.getCard());
@@ -98,25 +98,21 @@ public class RazorPayServiceImpl implements RazorPayService {
         options.put("amount", (int) (amount * 100));
         options.put("currency", CURRENCY_INR);
         options.put("description", "Payment for Order " + orderId);
-
         options.put("customer", new JSONObject()
                 .put("name", customerName)
                 .put("email", customerEmail)
                 .put("contact", customerContact)
         );
-
         options.put("notify", new JSONObject()
                 .put("sms", false)
                 .put("email", true)
         );
         options.put("callback_url", callbackUrl);
         options.put("callback_method", CALLBACK_METHOD);
-
         options.put("notes", new JSONObject()
                 .put("order_id", orderId)
                 .put("user_id", userId)
                 .put("transaction_id", transactionId));
-
         return options;
     }
 }

@@ -14,7 +14,7 @@ public class Entity{
 	private Notes notes;
 
 	@JsonProperty("created_at")
-	private int createdAt;
+	private long createdAt;
 
 	@JsonProperty("amount_due")
 	private int amountDue;
@@ -193,11 +193,11 @@ public class Entity{
 		return notes;
 	}
 
-	public void setCreatedAt(int createdAt){
+	public void setCreatedAt(long createdAt){
 		this.createdAt = createdAt;
 	}
 
-	public int getCreatedAt(){
+	public long getCreatedAt(){
 		return createdAt;
 	}
 
@@ -608,5 +608,7 @@ public class Entity{
 	public String getCard(){
 		return card;
 	}
+
+
 
 }
