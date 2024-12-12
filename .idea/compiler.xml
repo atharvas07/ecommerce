@@ -2,7 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile name="Annotation profile for user-management-svc" enabled="true">
+      <profile name="Annotation profile for payment-svc" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -12,6 +12,7 @@
         </processorPath>
         <module name="microsvc-lib" />
         <module name="user-management-svc" />
+        <module name="payment-svc" />
         <module name="product-svc" />
       </profile>
     </annotationProcessing>
@@ -19,6 +20,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="microsvc-lib" options="-parameters" />
+      <module name="payment-svc" options="-parameters" />
       <module name="product-svc" options="-parameters" />
       <module name="user-management-svc" options="-parameters" />
     </option>

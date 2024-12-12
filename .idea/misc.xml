@@ -7,6 +7,7 @@
         <option value="$PROJECT_DIR$/user-management-svc/pom.xml" />
         <option value="$PROJECT_DIR$/microsvc-lib/pom.xml" />
         <option value="$PROJECT_DIR$/product-svc/pom.xml" />
+        <option value="$PROJECT_DIR$/payment-svc/pom.xml" />
       </list>
     </option>
   </component>
