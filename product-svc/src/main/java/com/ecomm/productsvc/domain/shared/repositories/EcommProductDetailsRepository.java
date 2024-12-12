@@ -3,6 +3,8 @@ package com.ecomm.productsvc.domain.shared.repositories;
 import com.ecomm.productsvc.domain.shared.entities.EcommProductDetails;
 import com.ecomm.productsvc.domain.shared.entities.ProductInfoProjection;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -33,4 +35,6 @@ public interface EcommProductDetailsRepository extends JpaRepository<EcommProduc
     Optional<EcommProductDetails> findByIdAndIsDeletedFalse(Long id);
 
     boolean existsByIdAndIsDeletedIsFalse(Long id);
+
+    Page<ProductInfoProjection> findByTitleContaining(String searchTerm, Pageable pageable);
 }

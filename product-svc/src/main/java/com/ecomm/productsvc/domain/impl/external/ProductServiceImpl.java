@@ -1,4 +1,4 @@
-package com.ecomm.productsvc.domain.services.external;
+package com.ecomm.productsvc.domain.impl.external;
 
 import com.ecomm.mircrosvclib.models.BaseResponse;
 import com.ecomm.productsvc.domain.clients.FakeStoreProductClient;

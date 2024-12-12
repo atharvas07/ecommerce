@@ -1,4 +1,4 @@
-package com.ecomm.productsvc.domain.services.internal;
+package com.ecomm.productsvc.domain.impl.internal;
 
 import com.ecomm.mircrosvclib.models.BaseResponse;
 import com.ecomm.productsvc.domain.models.external.Product;
