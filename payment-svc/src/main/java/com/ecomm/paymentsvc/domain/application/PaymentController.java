@@ -26,7 +26,8 @@ public class PaymentController {
     @PostMapping("/initiate-payment/{orderId}")
     public ResponseEntity<BaseResponse> initiatePayment(HttpServletRequest httpServletRequest, @PathVariable String orderId){
         String sessionId = httpServletRequest.getHeader("session-id");
-        return paymentService.createPaymentLink(orderId, sessionId);
+        String userId = httpServletRequest.getHeader("user-id");
+        return paymentService.createPaymentLink(userId, orderId, sessionId);
     }
 
     @PostMapping("/webhook")

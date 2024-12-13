@@ -1,17 +1,19 @@
 package com.ecomm.paymentsvc.domain.impl;
 
 import com.ecomm.mircrosvclib.models.BaseResponse;
+import com.ecomm.mircrosvclib.utils.JsonUtils;
 import com.ecomm.paymentsvc.domain.models.external.RazorPayGenerateLinkResponse;
+import com.ecomm.paymentsvc.domain.models.internal.OrderDetailsResponse;
 import com.ecomm.paymentsvc.domain.services.PaymentService;
 import com.ecomm.paymentsvc.domain.services.RazorPayService;
-import com.ecomm.paymentsvc.domain.shared.entities.EcommOrderDetailsProjection;
 import com.ecomm.paymentsvc.domain.shared.entities.EcommTransactionsDetail;
-import com.ecomm.paymentsvc.domain.shared.repositories.EcommOrderDetailsRepository;
+import com.ecomm.paymentsvc.domain.shared.proxy.OrderManagementServiceProxy;
 import com.ecomm.paymentsvc.domain.shared.repositories.TransactionsDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -20,25 +22,24 @@ public class PaymentServiceImpl implements PaymentService {
 
     RazorPayService razorPayService;
     private final TransactionsDetailsRepository transactionsDetailsRepository;
-    private final EcommOrderDetailsRepository ecommOrderDetailsRepository;
-
+    private final OrderManagementServiceProxy orderManagementServiceProxy;
     @Autowired
-    PaymentServiceImpl(RazorPayService razorPayService, TransactionsDetailsRepository transactionsDetailsRepository, EcommOrderDetailsRepository ecommOrderDetailsRepository) {
+    PaymentServiceImpl(RazorPayService razorPayService, TransactionsDetailsRepository transactionsDetailsRepository, OrderManagementServiceProxy orderManagementServiceProxy) {
         this.razorPayService = razorPayService;
         this.transactionsDetailsRepository = transactionsDetailsRepository;
-        this.ecommOrderDetailsRepository = ecommOrderDetailsRepository;
+        this.orderManagementServiceProxy = orderManagementServiceProxy;
     }
 
     @Override
-    public ResponseEntity<BaseResponse> createPaymentLink(String orderId, String sessionId) {
+    public ResponseEntity<BaseResponse> createPaymentLink(String userId, String orderId, String sessionId) {
         try{
-            EcommOrderDetailsProjection orderDetails = ecommOrderDetailsRepository.findByOrderId(orderId);
+            OrderDetailsResponse orderDetails = JsonUtils.getBeanByObject(Objects.requireNonNull(orderManagementServiceProxy.getOrderDetails(userId, orderId).getBody()).getRespMsg(), OrderDetailsResponse.class);
             String transactionId = UUID.randomUUID().toString();
             RazorPayGenerateLinkResponse result = razorPayService.createPaymentLink(
-                    orderDetails.getUserId().getId(),
-                    orderDetails.getUserId().getFirstName() + " " + orderDetails.getUserId().getLastName(),
-                    orderDetails.getUserId().getEmail(),
-                    orderDetails.getUserId().getMobile().toString(),
+                    userId,
+                    orderDetails.getUser().getFirstName() + " " + orderDetails.getUser().getLastName(),
+                    orderDetails.getUser().getEmail(),
+                    orderDetails.getUser().getMobile(),
                     orderDetails.getAmount(),
                     orderDetails.getOrderId(),
                     transactionId

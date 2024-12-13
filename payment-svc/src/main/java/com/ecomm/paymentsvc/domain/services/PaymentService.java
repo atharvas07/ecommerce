@@ -5,5 +5,5 @@ import com.ecomm.mircrosvclib.models.BaseResponse;
 import org.springframework.http.ResponseEntity;
 
 public interface PaymentService {
-    ResponseEntity<BaseResponse> createPaymentLink(String orderId, String sessionId);
+    ResponseEntity<BaseResponse> createPaymentLink(String userId, String orderId, String sessionId);
 }

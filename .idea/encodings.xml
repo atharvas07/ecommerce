@@ -3,6 +3,7 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/api-gateway-svc/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/microsvc-lib/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/order-management-svc/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/payment-svc/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/product-svc/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/user-management-svc/src/main/java" charset="UTF-8" />

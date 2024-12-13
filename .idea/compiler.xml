@@ -2,7 +2,13 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile name="Annotation profile for api-gateway-svc" enabled="true">
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="order-management-svc" />
+      </profile>
+      <profile name="Annotation profile for payment-svc" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -22,6 +28,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-gateway-svc" options="-parameters" />
       <module name="microsvc-lib" options="-parameters" />
+      <module name="order-management-svc" options="-parameters" />
       <module name="payment-svc" options="-parameters" />
       <module name="product-svc" options="-parameters" />
       <module name="user-management-svc" options="-parameters" />
