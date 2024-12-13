@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @Component
 public interface OrderManagementServiceProxy {
 
-    @GetMapping("/details/{orderId}")
+    @GetMapping("/order/details/{orderId}")
     ResponseEntity<BaseResponse> getOrderDetails(
             @RequestHeader("user-id") String userId,
             @PathVariable("orderId") String orderId

@@ -110,7 +110,7 @@ public class Entity{
 	private Object errorReason;
 
 	@JsonProperty("acquirer_data")
-	private AcquirerData acquirerData;
+	private Object acquirerData;
 
 	@JsonProperty("error_description")
 	private Object errorDescription;
@@ -449,12 +449,12 @@ public class Entity{
 		return errorReason;
 	}
 
-	public void setAcquirerData(AcquirerData acquirerData){
-		this.acquirerData = acquirerData;
+	public Object getAcquirerData() {
+		return acquirerData;
 	}
 
-	public AcquirerData getAcquirerData(){
-		return acquirerData;
+	public void setAcquirerData(Object acquirerData) {
+		this.acquirerData = acquirerData;
 	}
 
 	public void setErrorDescription(Object errorDescription){

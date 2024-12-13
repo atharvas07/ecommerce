@@ -4,9 +4,12 @@ import com.ecomm.mircrosvclib.utils.JsonUtils;
 import com.ecomm.paymentsvc.domain.models.external.Entity;
 import com.ecomm.paymentsvc.domain.models.external.RazorPayGenerateLinkResponse;
 import com.ecomm.paymentsvc.domain.models.external.RazorPayWebhookRequest;
+import com.ecomm.paymentsvc.domain.models.external.response.FetchPaymentDetailsResponse;
+import com.ecomm.paymentsvc.domain.models.external.response.FetchPaymentStatusResponse;
 import com.ecomm.paymentsvc.domain.services.RazorPayService;
 import com.ecomm.paymentsvc.domain.shared.entities.EcommTransactionsDetail;
 import com.ecomm.paymentsvc.domain.shared.repositories.TransactionsDetailsRepository;
+import com.razorpay.Payment;
 import com.razorpay.PaymentLink;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
@@ -14,12 +17,15 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.ecomm.mircrosvclib.utils.EnumUtils.RazorpayPaymentStatus.CREATED;
 import static org.apache.logging.log4j.LogManager.getLogger;
 
 @Service
@@ -55,7 +61,6 @@ public class RazorPayServiceImpl implements RazorPayService {
             Map<String, Object> paymentOptions = buildPaymentLinkOptions(userId, customerName, customerEmail, customerContact, amount, orderId, transactionId);
 
             PaymentLink paymentLink = client.paymentLink.create(new JSONObject(paymentOptions));
-
             logger.info(paymentLink.toJson());
 
             return JsonUtils.getBeanByJson(paymentLink.toString(), RazorPayGenerateLinkResponse.class);
@@ -115,4 +120,48 @@ public class RazorPayServiceImpl implements RazorPayService {
                 .put("transaction_id", transactionId));
         return options;
     }
+
+    @Scheduled(cron = "0 */2 * * * *")
+    public void fetchPayment() {
+        try {
+            List<EcommTransactionsDetail> pendingTransactions = transactionsDetailsRepository.findByStatus(String.valueOf(CREATED));
+            pendingTransactions.forEach(transaction -> {
+                try {
+                    logger.info("Status Fetching for " + transaction.getPaymentRefNumber());
+                    RazorpayClient client = new RazorpayClient(apiKey, apiSecret);
+                    PaymentLink paymentLink = client.paymentLink.fetch(transaction.getPaymentRefNumber());
+                    FetchPaymentStatusResponse response = JsonUtils.getBeanByJson(paymentLink.toString(), FetchPaymentStatusResponse.class);
+
+                    if (response.getPayments() != null && !response.getPayments().isEmpty()) {
+                        Payment paymentDetails = client.payments.fetch(response.getPayments().get(0).getPaymentId());
+                        FetchPaymentDetailsResponse paymentDetailsResponse = JsonUtils.getBeanByJson(paymentDetails.toString(), FetchPaymentDetailsResponse.class);
+
+                        transaction.setStatus(paymentDetailsResponse.getStatus());
+                        transaction.setFees((double) (paymentDetailsResponse.getFee() / 100));
+                        transaction.setMethod(paymentDetailsResponse.getMethod());
+                        transaction.setTxnTime(paymentDetailsResponse.getCreatedAt());
+                        transaction.setVpa(paymentDetailsResponse.getVpa());
+                        transaction.setBank(paymentDetailsResponse.getBank());
+                        transaction.setCard(paymentDetailsResponse.getCard());
+                        transaction.setCardId(paymentDetailsResponse.getCardId());
+                        transaction.setAcquirerData(JsonUtils.getJSON(paymentDetailsResponse.getAcquirerData()));
+                        transaction.setWallet(paymentDetailsResponse.getWallet());
+                        transaction.setTax((double) (paymentDetailsResponse.getTax() / 100));
+
+                        transactionsDetailsRepository.save(transaction);
+                        logger.info("Status Updated for " + transaction.getPaymentRefNumber());
+
+
+                    }
+
+                } catch (RazorpayException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            logger.error(e.getStackTrace());
+        }
+    }
+
 }

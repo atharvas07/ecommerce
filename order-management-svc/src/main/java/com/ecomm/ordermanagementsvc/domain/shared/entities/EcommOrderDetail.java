@@ -3,9 +3,6 @@ package com.ecomm.ordermanagementsvc.domain.shared.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 @Entity
 @Table(name = "ecomm_order_details")
 public class EcommOrderDetail {
@@ -40,12 +37,6 @@ public class EcommOrderDetail {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SHIPPING_ADDRESS")
     private EcommUserAddressDetail shippingAddress;
-
-    @OneToMany(mappedBy = "order")
-    private Set<EcommOrderStatusUpdate> orderStatusUpdates = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "order")
-    private Set<EcommPurchaseProductDetail> purchaseProductDetails = new LinkedHashSet<>();
 
     public Double getAmount() {
         return amount;

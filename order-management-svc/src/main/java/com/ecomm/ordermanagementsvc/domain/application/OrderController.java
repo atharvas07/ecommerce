@@ -15,7 +15,7 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping("/create/{cartId}")
+    @PostMapping("/initiate")
     public ResponseEntity<BaseResponse> createOrder(HttpServletRequest httpServletRequest, @PathVariable String cartId) {
         String userId = httpServletRequest.getHeader("user-id");
         return null;
@@ -33,12 +33,12 @@ public class OrderController {
 
     @GetMapping("/status/{orderId}")
     public ResponseEntity<BaseResponse> getOrderStatus(@RequestHeader("user-id") String userId, @PathVariable String orderId){
-        return null;
+        return orderService.getOrderStatus(orderId);
     }
 
     @PostMapping("/status/updates/{orderId}")
-    public ResponseEntity<BaseResponse> updateOrderStatus(@RequestHeader("user-id") String userId, @PathVariable String orderId){
-        return null;
+    public ResponseEntity<BaseResponse> updateOrderStatus(@PathVariable String orderId) {
+        return orderService.updateOrderStatus(orderId);
     }
 
 

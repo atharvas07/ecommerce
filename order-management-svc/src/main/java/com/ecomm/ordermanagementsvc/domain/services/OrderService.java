@@ -7,4 +7,8 @@ public interface OrderService {
     ResponseEntity<BaseResponse> orderDetails(String orderId, String userId);
 
     ResponseEntity<BaseResponse> getAllOrders(String userId);
+
+    ResponseEntity<BaseResponse> getOrderStatus(String orderId);
+
+    ResponseEntity<BaseResponse> updateOrderStatus(String orderId);
 }
