@@ -7,6 +7,7 @@ import com.ecomm.mircrosvclib.utils.JsonUtils;
 import com.ecomm.usermanagementsvc.domain.dtos.request.*;
 import com.ecomm.usermanagementsvc.domain.dtos.response.ProfileDetailsClientResponse;
 import com.ecomm.usermanagementsvc.domain.dtos.response.RegisterUserClientResponse;
+import com.ecomm.usermanagementsvc.domain.services.JwtService;
 import com.ecomm.usermanagementsvc.domain.services.redis.RedisService;
 import com.ecomm.usermanagementsvc.domain.services.user.UserService;
 import com.ecomm.usermanagementsvc.domain.shared.entities.EcommUserAddressDetails;
@@ -30,23 +31,22 @@ import static com.ecomm.mircrosvclib.exception.ExceptionHandler.getDuplicateFiel
 public class UserServiceImpl implements UserService {
 
     private static final int SESSION_EXPIRY_TIME_SECONDS = 432000; // 5 days
-    private static final String ERROR_USER_EXISTS = "User already exists";
     private static final String ERROR_SESSION_FAILED = "Failed to generate session";
     private static final String ERROR_USER_NOT_EXIST = "User does not exist";
     private static final String ERROR_INVALID_PASSWORD = "Invalid password";
     private static final String ERROR_INVALID_SESSION = "Invalid session";
     private static final String SUCCESS_PASSWORD_RESET = "Password reset successfully";
-    private static final String ERROR_SINGLE_ADDRESS = "You cannot delete the last remaining address. At least one address is required.";
-    private static final String ERROR_ADDRESS_NOT_FOUND = "Address not found.";
 
     private final UserDetailsRepository userDetailsRepository;
     private final UserAddressDetailsRepository userAddressDetailsRepository;
     private final RedisService redisService;
+    private final JwtService jwtService;
 
-    public UserServiceImpl(UserDetailsRepository userDetailsRepository, RedisService redisService, UserAddressDetailsRepository userAddressDetailsRepository) {
+    public UserServiceImpl(UserDetailsRepository userDetailsRepository, RedisService redisService, UserAddressDetailsRepository userAddressDetailsRepository, JwtService jwtService) {
         this.userDetailsRepository = userDetailsRepository;
         this.redisService = redisService;
         this.userAddressDetailsRepository = userAddressDetailsRepository;
+        this.jwtService = jwtService;
     }
 
     private static EcommUserAddressDetails getEcommUserAddressDetails(Address address, String userId) {
@@ -79,9 +79,9 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<BaseResponse> login(LoginClientRequest request, String sessionId) {
         try {
             EcommUserDetails userDetails = validateUserCredentials(request);
-            updateRedisSession(sessionId, userDetails, request.getEmail());
-            RegisterUserClientResponse loginResponse = prepareLoginResponse(userDetails);
-            return BaseResponse.getSuccessResponse(loginResponse).toResponseEntity();
+            String jwtToken = jwtService.generateToken(userDetails.getId(), userDetails.getEmail(), sessionId);
+            updateRedisSession(sessionId, userDetails, request.getEmail(), jwtToken);
+            return BaseResponse.getSuccessResponse(jwtToken).toResponseEntity();
 
         } catch (CustomException ce) {
             return BaseResponse.getClientErrorResponse(ce.getMessage()).toResponseEntity();
@@ -179,16 +179,17 @@ public class UserServiceImpl implements UserService {
         return userDetails;
     }
 
-    private void updateRedisSession(String sessionId, EcommUserDetails userDetails, String email) throws CustomException, JSONException {
+    private void updateRedisSession(String sessionId, EcommUserDetails userDetails, String email, String token) throws CustomException, JSONException {
         Object sessionDetails = redisService.getValue(sessionId);
         if (sessionDetails == null) {
             throw new CustomException(ERROR_INVALID_SESSION);
         }
-        JSONObject sessionJson = JsonUtils.getBeanByObject(sessionDetails, JSONObject.class);
+        JSONObject sessionJson = new JSONObject(String.valueOf(sessionDetails));
         sessionJson.put("email", email);
         sessionJson.put("userId", userDetails.getId());
         sessionJson.put("userName", userDetails.getUserName());
         sessionJson.put("isLoggedIn", true);
+        sessionJson.put("token", token);
         redisService.saveValueWithExpiry(sessionId, sessionJson, SESSION_EXPIRY_TIME_SECONDS);
     }
 

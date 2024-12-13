@@ -15,6 +15,7 @@ public class UserManagementController {
 
     private final UserService userService;
 
+
     @Autowired
     public UserManagementController(UserService userService) {
         this.userService = userService;
@@ -45,6 +46,8 @@ public class UserManagementController {
     @PostMapping("/update-profile")
     public ResponseEntity<BaseResponse> updateProfile(HttpServletRequest servletRequest, @Valid @RequestBody ModifyDetailsClientRequest request) {
         String sessionId = servletRequest.getHeader("session-id");
+        String userId = servletRequest.getHeader("user-id");
+        request.setUserId(userId);
         return userService.modifyDetails(request, sessionId);
     }
 
@@ -54,13 +57,15 @@ public class UserManagementController {
         return userService.resetPassword(request, sessionId);
     }
 
-    @GetMapping("/profile-details/{userId}")
-    public ResponseEntity<BaseResponse> profileDetails(@PathVariable String userId) {
+    @GetMapping("/profile-details")
+    public ResponseEntity<BaseResponse> profileDetails(HttpServletRequest servletRequest) {
+        String userId = servletRequest.getHeader("user-id");
         return userService.profileDetails(userId);
     }
 
-    @PostMapping("/address/{userId}/{action}")
-    public ResponseEntity<BaseResponse> updateAddress(@PathVariable String userId, @PathVariable String action, @RequestBody Address address) {
+    @PostMapping("/address/{action}")
+    public ResponseEntity<BaseResponse> updateAddress(HttpServletRequest servletRequest, @PathVariable String action, @RequestBody Address address) {
+        String userId = servletRequest.getHeader("user-id");
         return userService.updateAddress(userId, action, address);
     }
 

@@ -2,7 +2,6 @@ package com.ecomm.paymentsvc.domain.impl;
 
 import com.ecomm.mircrosvclib.models.BaseResponse;
 import com.ecomm.paymentsvc.domain.models.external.RazorPayGenerateLinkResponse;
-import com.ecomm.paymentsvc.domain.models.internal.InitiatePaymentClientRequest;
 import com.ecomm.paymentsvc.domain.services.PaymentService;
 import com.ecomm.paymentsvc.domain.services.RazorPayService;
 import com.ecomm.paymentsvc.domain.shared.entities.EcommOrderDetailsProjection;
@@ -31,9 +30,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ResponseEntity<BaseResponse> createPaymentLink(InitiatePaymentClientRequest request, String sessionId) {
+    public ResponseEntity<BaseResponse> createPaymentLink(String orderId, String sessionId) {
         try{
-            EcommOrderDetailsProjection orderDetails = ecommOrderDetailsRepository.findByOrderId(request.getOrderId());
+            EcommOrderDetailsProjection orderDetails = ecommOrderDetailsRepository.findByOrderId(orderId);
             String transactionId = UUID.randomUUID().toString();
             RazorPayGenerateLinkResponse result = razorPayService.createPaymentLink(
                     orderDetails.getUserId().getId(),

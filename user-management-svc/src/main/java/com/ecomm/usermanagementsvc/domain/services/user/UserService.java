@@ -20,4 +20,5 @@ public interface UserService {
     ResponseEntity<BaseResponse> profileDetails(String userId);
 
     ResponseEntity<BaseResponse> updateAddress(String userId, String action, Address address);
+
 }

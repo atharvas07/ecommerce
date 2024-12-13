@@ -1,4 +1,4 @@
-package com.ecomm.gatewaysvc;
+package com.ecomm.apigatewaysvc;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

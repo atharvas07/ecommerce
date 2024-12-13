@@ -8,6 +8,8 @@
         <option value="$PROJECT_DIR$/microsvc-lib/pom.xml" />
         <option value="$PROJECT_DIR$/product-svc/pom.xml" />
         <option value="$PROJECT_DIR$/payment-svc/pom.xml" />
+        <option value="$PROJECT_DIR$/gateway-svc/pom.xml" />
+        <option value="$PROJECT_DIR$/api-gateway-svc/pom.xml" />
       </list>
     </option>
   </component>
