@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 @Entity
 @Table(name = "ecomm_product_details")
 public class EcommProductDetail {
@@ -43,9 +40,6 @@ public class EcommProductDetail {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
-    @OneToMany(mappedBy = "product")
-    private Set<com.ecomm.ordermanagementsvc.domain.shared.entities.EcommPurchaseProductDetail> ecommPurchaseProductDetails = new LinkedHashSet<>();
-
     public String getImageUrl() {
         return imageUrl;
     }
@@ -69,12 +63,6 @@ public class EcommProductDetail {
     }
     public void setDeleted(Boolean deleted) {
         isDeleted = deleted;
-    }
-    public Set<EcommPurchaseProductDetail> getEcommPurchaseProductDetails() {
-        return ecommPurchaseProductDetails;
-    }
-    public void setEcommPurchaseProductDetails(Set<EcommPurchaseProductDetail> ecommPurchaseProductDetails) {
-        this.ecommPurchaseProductDetails = ecommPurchaseProductDetails;
     }
     public Long getId() {
         return id;

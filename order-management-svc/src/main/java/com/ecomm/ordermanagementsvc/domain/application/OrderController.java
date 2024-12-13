@@ -15,11 +15,12 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<BaseResponse> createOrder(HttpServletRequest httpServletRequest){
+    @PostMapping("/create/{cartId}")
+    public ResponseEntity<BaseResponse> createOrder(HttpServletRequest httpServletRequest, @PathVariable String cartId) {
         String userId = httpServletRequest.getHeader("user-id");
         return null;
     }
+
     @GetMapping("/")
     public ResponseEntity<BaseResponse> getOrderDetails(@RequestHeader("user-id") String userId){
         return orderService.getAllOrders(userId);

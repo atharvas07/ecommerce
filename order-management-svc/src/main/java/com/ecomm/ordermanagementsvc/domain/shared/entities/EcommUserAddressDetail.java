@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 @lombok.Getter
 @lombok.Setter
 @Entity
@@ -54,7 +51,5 @@ public class EcommUserAddressDetail {
     @Column(name = "PIN_CODE", nullable = false, length = 20)
     private String pinCode;
 
-    @OneToMany
-    private Set<EcommOrderDetail> ecommOrderDetails = new LinkedHashSet<>();
 
 }

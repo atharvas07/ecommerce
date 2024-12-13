@@ -1,14 +1,14 @@
 package com.ecomm.ordermanagementsvc.domain.shared.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -36,11 +36,5 @@ public class EcommUserDetail {
     @Size(max = 255)
     @Column(name = "last_name")
     private String lastName;
-
-    @OneToMany
-    private Set<EcommOrderDetail> ecommOrderDetails = new LinkedHashSet<>();
-
-    @OneToMany
-    private Set<EcommUserAddressDetail> ecommUserAddressDetails = new LinkedHashSet<>();
 
 }

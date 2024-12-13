@@ -47,13 +47,6 @@ public class EcommOrderDetail {
     @OneToMany(mappedBy = "order")
     private Set<EcommPurchaseProductDetail> purchaseProductDetails = new LinkedHashSet<>();
 
-    public Set<EcommPurchaseProductDetail> getPurchaseProductDetails() {
-        return purchaseProductDetails;
-    }
-    public Set<EcommOrderStatusUpdate> getOrderStatusUpdates() {
-        return orderStatusUpdates;
-    }
-
     public Double getAmount() {
         return amount;
     }
