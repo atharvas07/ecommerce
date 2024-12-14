@@ -27,11 +27,11 @@ public class EnumUtils {
             return null;
         }
 
-        public static String getPaymentOutcome(RazorpayPaymentStatus status) {
+        public static boolean isSuccess(RazorpayPaymentStatus status) {
             if (status == AUTHORIZED || status == CAPTURED) {
-                return "PAYMENT_SUCCESS";
+                return true;
             }
-            return status != null ? status.getStatus() : "UNKNOWN_STATUS";
+            return false;
         }
 
         public String getStatus() {
@@ -41,13 +41,15 @@ public class EnumUtils {
 
     public enum ProductDeliveryStatus {
 
-        PAYMENT_CONFIRMED(1, "The payment for the order has been successfully confirmed."),
+        INITIATED(1, "The order has been initiated."),
         ORDER_PLACED(2, "The order has been placed."),
         WAREHOUSE_PROCESSING(3, "The order is being packed and processed at the warehouse."),
         PICKED_BY_COURIER(4, "The product has been picked up by the courier or shipping partner."),
         IN_TRANSIT(5, "The product is in transit to the delivery destination."),
         OUT_FOR_DELIVERY(6, "The product is out for delivery to the customer's address."),
-        DELIVERED(7, "The product has been successfully delivered to the customer.");
+        DELIVERED(7, "The product has been successfully delivered to the customer."),
+
+        PAYMENT_FAILED(10, "The payment for the order has been failed.");
 
         private final int sequenceNumber;
         private final String description;

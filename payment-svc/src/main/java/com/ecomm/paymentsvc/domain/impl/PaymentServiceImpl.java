@@ -53,6 +53,28 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+    @Override
+    public String createPaymentLink(String userId, String customerName, String customerEmail,
+                                    String customerContact, double amount, String orderId) {
+        try {
+            String transactionId = UUID.randomUUID().toString();
+            RazorPayGenerateLinkResponse result = razorPayService.createPaymentLink(
+                    userId,
+                    customerName,
+                    customerEmail,
+                    customerContact,
+                    amount,
+                    orderId,
+                    transactionId
+            );
+            EcommTransactionsDetail transactionDetails = getTransactionDetails(orderId, result);
+            transactionsDetailsRepository.save(transactionDetails);
+            return result.getShortUrl();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     private static EcommTransactionsDetail getTransactionDetails(String orderId, RazorPayGenerateLinkResponse result) {
         EcommTransactionsDetail transactionDetails = new EcommTransactionsDetail();
         transactionDetails.setOrderId(orderId);

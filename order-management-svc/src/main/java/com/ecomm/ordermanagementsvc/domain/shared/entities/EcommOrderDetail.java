@@ -3,6 +3,9 @@ package com.ecomm.ordermanagementsvc.domain.shared.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "ecomm_order_details")
 public class EcommOrderDetail {
@@ -12,7 +15,7 @@ public class EcommOrderDetail {
     private String orderId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID")
+    @JoinColumn(name = "USER_ID", insertable = false, updatable = false)
     private EcommUserDetail user;
 
     @Size(max = 45)
@@ -31,15 +34,54 @@ public class EcommOrderDetail {
     private String paymentStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "BILLING_ADDRESS")
+    @JoinColumn(name = "BILLING_ADDRESS", insertable = false, updatable = false)
     private EcommUserAddressDetail billingAddress;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SHIPPING_ADDRESS")
+    @JoinColumn(name = "SHIPPING_ADDRESS", insertable = false, updatable = false)
     private EcommUserAddressDetail shippingAddress;
+
+    @Column(name = "BILLING_ADDRESS")
+    private String billingAddressId;
+
+    @Column(name = "SHIPPING_ADDRESS")
+    private String shippingAddressId;
+
+    @Column(name = "USER_ID")
+    private String userId;
+
+    @Column(name = "TRANSACTION_ID")
+    private String transactionId;
+
+    @OneToMany(mappedBy = "order")
+    private Set<EcommPurchaseProductDetail> purchaseProductDetails = new LinkedHashSet<>();
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setBillingAddressId(String billingAddressId) {
+        this.billingAddressId = billingAddressId;
+    }
+
+    public void setShippingAddressId(String shippingAddressId) {
+        this.shippingAddressId = shippingAddressId;
+    }
 
     public Double getAmount() {
         return amount;
+    }
+
+    public Set<EcommPurchaseProductDetail> getPurchaseProductDetails() {
+        return purchaseProductDetails;
     }
 
     public EcommUserAddressDetail getBillingAddress() {
@@ -87,4 +129,5 @@ public class EcommOrderDetail {
     public void setPaymentStatus(String paymentStatus) {
         this.paymentStatus = paymentStatus;
     }
+
 }

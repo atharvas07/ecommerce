@@ -6,4 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface PaymentService {
     ResponseEntity<BaseResponse> createPaymentLink(String userId, String orderId, String sessionId);
+
+    String createPaymentLink(String userId, String customerName, String customerEmail,
+                             String customerContact, double amount, String orderId);
 }

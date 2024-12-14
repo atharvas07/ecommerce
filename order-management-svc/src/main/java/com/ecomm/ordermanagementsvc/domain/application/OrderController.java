@@ -2,7 +2,6 @@ package com.ecomm.ordermanagementsvc.domain.application;
 
 import com.ecomm.mircrosvclib.models.BaseResponse;
 import com.ecomm.ordermanagementsvc.domain.services.OrderService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,11 +14,6 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping("/initiate")
-    public ResponseEntity<BaseResponse> createOrder(HttpServletRequest httpServletRequest, @PathVariable String cartId) {
-        String userId = httpServletRequest.getHeader("user-id");
-        return null;
-    }
 
     @GetMapping("/")
     public ResponseEntity<BaseResponse> getOrderDetails(@RequestHeader("user-id") String userId){
@@ -39,6 +33,11 @@ public class OrderController {
     @PostMapping("/status/updates/{orderId}")
     public ResponseEntity<BaseResponse> updateOrderStatus(@PathVariable String orderId) {
         return orderService.updateOrderStatus(orderId);
+    }
+
+    @GetMapping("/payment/updates/{orderId}")
+    public ResponseEntity<BaseResponse> updatePaymentDetails(@PathVariable String orderId, @RequestParam String transactionId, @RequestParam String paymentStatus) {
+        return orderService.updatePaymentDetails(orderId, transactionId, paymentStatus);
     }
 
 

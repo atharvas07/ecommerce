@@ -87,5 +87,14 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    @Override
+    public ResponseEntity<BaseResponse> updatePaymentDetails(String orderId, String transactionId, String paymentStatus) {
+        try {
+            ecommOrderDetailsRepository.updatePaymentDetails(orderId, transactionId, paymentStatus);
+            return BaseResponse.getSuccessResponse("Success").toResponseEntity();
+        } catch (Exception e) {
+            return BaseResponse.getErrorResponse(e.getMessage()).toResponseEntity();
+        }
+    }
 
 }

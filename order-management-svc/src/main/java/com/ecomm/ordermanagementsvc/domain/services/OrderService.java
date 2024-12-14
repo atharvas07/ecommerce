@@ -11,4 +11,6 @@ public interface OrderService {
     ResponseEntity<BaseResponse> getOrderStatus(String orderId);
 
     ResponseEntity<BaseResponse> updateOrderStatus(String orderId);
+
+    ResponseEntity<BaseResponse> updatePaymentDetails(String orderId, String transactionId, String paymentStatus);
 }

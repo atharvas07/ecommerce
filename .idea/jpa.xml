@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JpaBuddyIdeaProjectConfig">
-    <option name="reLastEntityCreationPackage" value="order-management-svc/src/main/java/com/ecomm/ordermanagementsvc/domain/shared/entities" />
+    <option name="reLastEntityCreationPackage" value="payment-svc/src/main/java/com/ecomm/paymentsvc/domain/shared/entities" />
     <option name="reverseEngineeringLastDbConnectionId" value="26346fa4-efd7-47c8-8cd5-4888218b1c5c" />
   </component>
 </project>

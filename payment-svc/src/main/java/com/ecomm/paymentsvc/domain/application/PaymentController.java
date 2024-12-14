@@ -23,7 +23,7 @@ public class PaymentController {
         this.razorPayService = razorPayService;
     }
 
-    @PostMapping("/initiate-payment/{orderId}")
+    @PostMapping("/retry-payment/{orderId}")
     public ResponseEntity<BaseResponse> initiatePayment(HttpServletRequest httpServletRequest, @PathVariable String orderId){
         String sessionId = httpServletRequest.getHeader("session-id");
         String userId = httpServletRequest.getHeader("user-id");
@@ -35,4 +35,10 @@ public class PaymentController {
         razorPayService.webhook(JsonUtils.getBeanByObject(request, RazorPayWebhookRequest.class));
     }
 
+    @GetMapping("/pg/generate")
+    public String createPaymentLink(
+            @RequestParam String userId, @RequestParam String customerName, @RequestParam String customerEmail,
+            @RequestParam String customerContact, @RequestParam double amount, @RequestParam String orderId) {
+        return paymentService.createPaymentLink(userId, customerName, customerEmail, customerContact, amount, orderId);
+    }
 }
