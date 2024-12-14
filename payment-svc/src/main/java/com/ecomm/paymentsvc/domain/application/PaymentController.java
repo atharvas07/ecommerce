@@ -41,4 +41,9 @@ public class PaymentController {
             @RequestParam String customerContact, @RequestParam double amount, @RequestParam String orderId) {
         return paymentService.createPaymentLink(userId, customerName, customerEmail, customerContact, amount, orderId);
     }
+
+    @GetMapping("/details/{orderId}")
+    public ResponseEntity<BaseResponse> getPaymentDetails(@RequestHeader("user-id") String userId, @PathVariable String orderId) {
+        return paymentService.getPaymentDetails(orderId, userId);
+    }
 }

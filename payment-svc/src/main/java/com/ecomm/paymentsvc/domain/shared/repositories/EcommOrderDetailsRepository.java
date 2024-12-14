@@ -15,7 +15,7 @@ public interface EcommOrderDetailsRepository extends JpaRepository<EcommOrderDet
 
     @Modifying
     @Transactional
-    @Query("UPDATE EcommOrderDetail o SET o.paymentStatus = :paymentStatus, o.transactionId = :transactionId, o.status = :orderStatus WHERE o.orderId = :orderId ")
-    void updatePaymentDetails(@Param("orderId") String orderId, @Param("paymentStatus") String paymentStatus, @Param("transactionId") String transactionId, @Param("orderStatus") String orderStatus);
+    @Query("UPDATE EcommOrderDetail o SET o.paymentStatus = :paymentStatus, o.transactionId = :transactionId WHERE o.orderId = :orderId ")
+    void updatePaymentDetails(@Param("orderId") String orderId, @Param("paymentStatus") String paymentStatus, @Param("transactionId") String transactionId);
 
 }

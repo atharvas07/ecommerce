@@ -9,4 +9,6 @@ public interface PaymentService {
 
     String createPaymentLink(String userId, String customerName, String customerEmail,
                              String customerContact, double amount, String orderId);
+
+    ResponseEntity<BaseResponse> getPaymentDetails(String orderId, String userId);
 }

@@ -9,8 +9,9 @@ import com.ecomm.paymentsvc.domain.models.external.response.FetchPaymentDetailsR
 import com.ecomm.paymentsvc.domain.models.external.response.FetchPaymentStatusResponse;
 import com.ecomm.paymentsvc.domain.services.RazorPayService;
 import com.ecomm.paymentsvc.domain.shared.entities.EcommTransactionsDetail;
-import com.ecomm.paymentsvc.domain.shared.proxy.OrderManagementServiceProxy;
+import com.ecomm.paymentsvc.domain.shared.entities.OrderStatusUpdates;
 import com.ecomm.paymentsvc.domain.shared.repositories.EcommOrderDetailsRepository;
+import com.ecomm.paymentsvc.domain.shared.repositories.EcommOrderStatusUpdatesRepository;
 import com.ecomm.paymentsvc.domain.shared.repositories.TransactionsDetailsRepository;
 import com.razorpay.Payment;
 import com.razorpay.PaymentLink;
@@ -48,14 +49,14 @@ public class RazorPayServiceImpl implements RazorPayService {
     private final Logger logger = getLogger(RazorPayServiceImpl.class);
 
     private final TransactionsDetailsRepository transactionsDetailsRepository;
-    private final OrderManagementServiceProxy orderManagementServiceProxy;
     private final EcommOrderDetailsRepository ecommOrderDetailsRepository;
+    private final EcommOrderStatusUpdatesRepository ecommOrderStatusUpdatesRepository;
 
 
-    public RazorPayServiceImpl(TransactionsDetailsRepository transactionsDetailsRepository, OrderManagementServiceProxy orderManagementServiceProxy, EcommOrderDetailsRepository ecommOrderDetailsRepository) {
+    public RazorPayServiceImpl(TransactionsDetailsRepository transactionsDetailsRepository, EcommOrderDetailsRepository ecommOrderDetailsRepository, EcommOrderStatusUpdatesRepository ecommOrderStatusUpdatesRepository) {
         this.transactionsDetailsRepository = transactionsDetailsRepository;
-        this.orderManagementServiceProxy = orderManagementServiceProxy;
         this.ecommOrderDetailsRepository = ecommOrderDetailsRepository;
+        this.ecommOrderStatusUpdatesRepository = ecommOrderStatusUpdatesRepository;
     }
 
     @Override
@@ -97,8 +98,12 @@ public class RazorPayServiceImpl implements RazorPayService {
 
                 boolean isSuccess = EnumUtils.RazorpayPaymentStatus.isSuccess(EnumUtils.RazorpayPaymentStatus.fromStatus(transaction.getStatus()));
                 String orderStatus = isSuccess ? String.valueOf(EnumUtils.ProductDeliveryStatus.ORDER_PLACED) : String.valueOf(EnumUtils.ProductDeliveryStatus.PAYMENT_FAILED);
-                ecommOrderDetailsRepository.updatePaymentDetails(transaction.getOrderId(), transaction.getId(), transaction.getStatus(), orderStatus);
-
+                ecommOrderDetailsRepository.updatePaymentDetails(transaction.getOrderId(), transaction.getStatus(), transaction.getId());
+                OrderStatusUpdates orderUpdates = new OrderStatusUpdates();
+                orderUpdates.setOrderId(transaction.getOrderId());
+                orderUpdates.setStatus(orderStatus);
+                orderUpdates.setStatusDescription(EnumUtils.ProductDeliveryStatus.valueOf(orderStatus).getDescription());
+                ecommOrderStatusUpdatesRepository.save(orderUpdates);
             });
         } catch (Exception e){
             logger.error(e.getMessage());
@@ -142,13 +147,13 @@ public class RazorPayServiceImpl implements RazorPayService {
                     RazorpayClient client = new RazorpayClient(apiKey, apiSecret);
                     PaymentLink paymentLink = client.paymentLink.fetch(transaction.getPaymentRefNumber());
                     FetchPaymentStatusResponse response = JsonUtils.getBeanByJson(paymentLink.toString(), FetchPaymentStatusResponse.class);
-                    logger.info(response);
+                    logger.info(JsonUtils.getJSON(response));
 
                     if (response.getPayments() != null && !response.getPayments().isEmpty()) {
                         Payment paymentDetails = client.payments.fetch(response.getPayments().get(0).getPaymentId());
                         FetchPaymentDetailsResponse paymentDetailsResponse = JsonUtils.getBeanByJson(paymentDetails.toString(), FetchPaymentDetailsResponse.class);
+                        logger.info(JsonUtils.getJSON(paymentDetailsResponse));
 
-                        logger.info(paymentDetailsResponse);
                         transaction.setStatus(paymentDetailsResponse.getStatus());
                         transaction.setPaymentRefNumber(paymentDetailsResponse.getId());
                         transaction.setFees((double) (paymentDetailsResponse.getFee() / 100));
@@ -165,7 +170,12 @@ public class RazorPayServiceImpl implements RazorPayService {
 
                         boolean isSuccess = EnumUtils.RazorpayPaymentStatus.isSuccess(EnumUtils.RazorpayPaymentStatus.fromStatus(transaction.getStatus()));
                         String orderStatus = isSuccess ? String.valueOf(EnumUtils.ProductDeliveryStatus.ORDER_PLACED) : String.valueOf(EnumUtils.ProductDeliveryStatus.PAYMENT_FAILED);
-                        ecommOrderDetailsRepository.updatePaymentDetails(transaction.getOrderId(), transaction.getStatus(), transaction.getId(), orderStatus);
+                        ecommOrderDetailsRepository.updatePaymentDetails(transaction.getOrderId(), transaction.getStatus(), transaction.getId());
+                        OrderStatusUpdates orderUpdates = new OrderStatusUpdates();
+                        orderUpdates.setOrderId(transaction.getOrderId());
+                        orderUpdates.setStatus(orderStatus);
+                        orderUpdates.setStatusDescription(EnumUtils.ProductDeliveryStatus.valueOf(orderStatus).getDescription());
+                        ecommOrderStatusUpdatesRepository.save(orderUpdates);
 
                         logger.info("Status Updated for " + transaction.getPaymentRefNumber());
                     }

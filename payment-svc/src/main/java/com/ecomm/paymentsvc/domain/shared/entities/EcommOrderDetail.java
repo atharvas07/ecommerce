@@ -43,4 +43,31 @@ public class EcommOrderDetail {
     @Column(name = "PAYMENT_STATUS", length = 45)
     private String paymentStatus;
 
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public String getStatus() {
+        return status;
+    }
 }
